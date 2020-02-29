@@ -9,7 +9,7 @@ const app = express();
 
 // create a route handler and associate it with a route
 app.get('/', (req, res) => {
-    res.send({ hi: 'there'});
+    res.send({ bye: 'buddy'});
 });
 
 // Heroku will inject the port to use while in production OR use local port while in dev env
