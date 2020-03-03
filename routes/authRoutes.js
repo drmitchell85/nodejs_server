@@ -20,5 +20,18 @@ module.exports = app => {
     // afterwards the 'accessToken" callback is called, logging our accessToken in the above method
     app.get('/auth/google/callback', passport.authenticate('google'));
 
+    // logout route
+    app.get('/api/logout', (req, res) => {
+        req.logout();
+
+        // show user is signed out
+        res.send(req.user);
+    });
+    
+    // when someone makes a GET req to our app
+    app.get('/api/current_user', (req, res) => {
+        // ensures anyone logged into has access
+        res.send(req.user);
+    });
 };
 
