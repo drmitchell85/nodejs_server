@@ -18,14 +18,22 @@ module.exports = app => {
     // function looks similar to above, but now GoogleStragtegy has the code needed to get user details
     // Passport handles all of this internally
     // afterwards the 'accessToken" callback is called, logging our accessToken in the above method
-    app.get('/auth/google/callback', passport.authenticate('google'));
+    app.get(
+        '/auth/google/callback',
+        passport.authenticate('google'),
+        (req, res) => {
+            res.redirect('/surveys');
+        }
+    );
 
     // logout route
     app.get('/api/logout', (req, res) => {
         req.logout();
 
-        // show user is signed out
-        res.send(req.user);
+        // old testing method
+        // res.send(req.user);
+        
+        res.redirect('/');
     });
     
     // when someone makes a GET req to our app

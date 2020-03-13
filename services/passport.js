@@ -20,13 +20,46 @@ passport.deserializeUser((id, done) => {
         });
 });
 
+// passport.use(
+//     new GoogleStrategy({
+//         clientID: keys.googleClientID,
+//         clientSecret: keys.googleClientSecret,
+//         callbackURL: '/auth/google/callback',
+//         proxy: true
+//     }, (accessToken, refreshToken, profile, done) => {
+//         // NOTE: this callback is performed after code is exchanged
+
+//         console.log('access token', accessToken);
+//         console.log('refresh token', refreshToken);
+//         console.log('profile', profile);
+
+//         // first, see if user already exists
+//         // (!) this is an async task that returns a promise
+//         User.findOne({ googleId: profile.id })
+//             .then((existingUser) => {
+//                 if (existingUser) {
+//                     // user exists
+
+//                     // done(error, foundValue);
+//                     done(null, existingUser);
+//                 } else {
+//                     // user does not exist
+//                     new User({ googleId: profile.id })
+//                         .save()
+//                         .then(user => done(null, user));
+//                 }
+//             });
+//     })
+// );
+
 passport.use(
     new GoogleStrategy({
         clientID: keys.googleClientID,
         clientSecret: keys.googleClientSecret,
         callbackURL: '/auth/google/callback',
         proxy: true
-    }, (accessToken, refreshToken, profile, done) => {
+    }, 
+    async (accessToken, refreshToken, profile, done) => {
         // NOTE: this callback is performed after code is exchanged
 
         console.log('access token', accessToken);
@@ -34,20 +67,13 @@ passport.use(
         console.log('profile', profile);
 
         // first, see if user already exists
-        // (!) this is an async task that returns a promise
-        User.findOne({ googleId: profile.id })
-            .then((existingUser) => {
-                if (existingUser) {
-                    // user exists
-
-                    // done(error, foundValue);
-                    done(null, existingUser);
-                } else {
-                    // user does not exist
-                    new User({ googleId: profile.id })
-                        .save()
-                        .then(user => done(null, user));
-                }
-            });
+        const existingUser = await User.findOne({ googleId: profile.id })
+        if (existingUser) {
+            // user exists
+            return done(null, existingUser);
+        } 
+        // user does not exist
+        const user = await new User({ googleId: profile.id }).save()
+        done(null, user);
     })
 );
