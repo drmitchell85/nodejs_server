@@ -24,18 +24,15 @@ module.exports = app => {
         // Great place to send an email
         const mailer = new Mailer(survey, surveyTemplate(survey));
 
-        try { 
+        try {
             await mailer.send();
-            // save survey to DB
             await survey.save();
-            // deduct a credit and save
             req.user.credits -= 1;
             const user = await req.user.save();
-
+      
             res.send(user);
-        } catch (err) {
-            // unprocessable entity error
+          } catch (err) {
             res.status(422).send(err);
-        }
+          }
     });
 };
